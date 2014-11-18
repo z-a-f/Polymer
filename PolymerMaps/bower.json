@@ -2,7 +2,7 @@
   "name": "PolymerMap",
   "description": "Google Maps using Polymer components",
   "homepage": "",
-  "keywords": [google, maps, polymer],
+  "keywords": ["google", "maps", "polymer"],
   "author": "Zafar Takhirov",
   "private": true,
   "dependencies": {
