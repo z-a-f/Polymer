@@ -1,10 +1,9 @@
 {
   "name": "PolymerMap",
-  "description": "",
+  "description": "Google Maps using Polymer components",
   "homepage": "",
-  "keywords": [
-  ],
-  "author": "",
+  "keywords": [google, maps, polymer],
+  "author": "Zafar Takhirov",
   "private": true,
   "dependencies": {
     "polymer": "Polymer/polymer#master",
