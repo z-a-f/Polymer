@@ -13,7 +13,7 @@
 <polymer-element name="codelab-app">
   <template>
     <link rel="stylesheet" href="styles.css">
-    <core-drawer-panel responsiveWidth="600px">
+    <core-drawer-panel id="drawerPanel" responsiveWidth="600px">
 
       <core-header-panel drawer>
       <core-toolbar>Menu</core-toolbar>
@@ -21,7 +21,9 @@
 
       <core-header-panel main>
         <core-toolbar>
-          <paper-icon-button icon="menu"></paper-icon-button>
+          <paper-icon-button  icon="menu" core-drawer-toggle>
+
+          </paper-icon-button>
           <span flex>My notes</span>
           <paper-icon-button icon="search"></paper-icon-button>
           <paper-icon-button icon="more-vert"></paper-icon-button>
@@ -32,6 +34,16 @@
   </template>
   <script>
     Polymer({
+
     });
   </script>
 </polymer-element>
+
+<!--
+on-click="{{toggleDrawer}}"
+
+toggleDrawer: function() {
+this.$.drawerPanel.togglePanel();
+}
+
+-->
