@@ -79,19 +79,21 @@
                         value="{{newNote}}"
                         label="Add a new note">
           </paper-input>
-          <template repeat="{{data}}" >
-            <div center horizontal layout class="item" data-done="{{done}}">
-              <paper-checkbox checked="{{done}}" on-change="{{dataChanged}}">
+          <template repeat="{{d in data}}">
+
+            <div flex center horizontal layout class="item" data-done="{{d.done}}">
+              <paper-checkbox checked="{{d.done}}" on-change="{{dataChanged}}">
               </paper-checkbox>
-              <paper-shadow z="2">
+              <paper-shadow flex z="2">
                 <div flex class="card">
-                  <p>{{body}}</p>
-                  <paper-button icon="delete"></paper-button>
+                  <p>{{d.body}}</p>
                   <paper-ripple class="recenteringTouch" fit></paper-ripple>
                 </div>
               </paper-shadow>
-              <!-- paper-icon-button icon="clear" on-click="{{remove}}"></paper-icon-button -->
+              <paper-icon-button icon="clear" on-click="{{deleteItem}}" del="{{d.id}}">
+              </paper-icon-button>
             </div>
+
           </template>
         </div>
 
@@ -101,9 +103,8 @@
     <core-localstorage id="storage" name="codelab-app-storage" value="{{data}}"></core-localstorage>
   </template>
   <script>
-    Polymer({
+    Polymer('codelab-app', {
       fontSize: 14,
-
       data: [],
 
       ready: function() {
@@ -114,10 +115,12 @@
       },
 
       add: function() {
+        var d = new Date()
         if (this.newNote) {
           this.data.unshift({
             body: this.newNote,
-            done: false
+            done: false,
+            id: d.getTime()
           });
           this.$.newNoteInput.style.display = 'none';
           this.$.newNoteInput.value = null;
@@ -128,9 +131,15 @@
         this.$.storage.save();
       },
 
-      delete: function() {
+      delete: function(item) {
         this.data = this.data.filter(function(item) {
           return !item.done;
+        })
+      },
+
+      deleteItem: function(event, detail, sender) {
+        this.data = this.data.filter(function(item) {
+          return item.id != (sender.attributes['del'].value);
         })
       },
 
@@ -149,12 +158,3 @@
     });
   </script>
 </polymer-element>
-
-<!--
-on-click="{{toggleDrawer}}"
-
-toggleDrawer: function() {
-this.$.drawerPanel.togglePanel();
-}
-
--->
