@@ -1,0 +1,185 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+
+<link rel="import" href="bower_components/core-scaffold/core-scaffold.html">
+<link rel="import" href="bower_components/core-splitter/core-splitter.html">
+<link rel="import" href="bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="bower_components/google-signin/google-signin.html">
+
+<script src="bower_components/cors-upload-sample/upload.js"></script>
+
+
+<polymer-element name="drive-app">
+
+  <template>
+    <link rel="stylesheet" href="drive-app.css">
+
+    <core-scaffold>
+      <!-- Left menu -->
+      <core-header-panel navigation flex mode="seamed">
+        <core-toolbar>
+          <google-signin
+              on-google-signin-success="{{signedIn}}"
+              on-google-signed-out="{{signedOut}}"
+              clientId="534294324013-5t3hnvrm4qe39dc91ra3rnc8bd95ph61.apps.googleusercontent.com"
+              scopes="https://www.googleapis.com/auth/drive" >
+          </google-signin>
+        </core-toolbar>
+      </core-header-panel>
+
+      <!-- Main app area -->
+      <div tool>My Drive App</div>
+      <div id="loggedin">
+        <!-- Dropzone for files -->
+        <div id="dropzone" on-tap="{{tapSelect}}"
+          on-dragover="{{handleDragOver}}"
+          on-drop="{{handleFileSelect}}">
+            Drag files to upload
+          <input type="file" id="files" name="files[]"
+            on-change="{{handleFilePick}}" multiple>
+        </div>
+
+        <!-- Dropzone toolbar -->
+        <core-toolbar layout horizontal id="dropzone-bar">
+          <div> <!-- Auto upload toggle -->
+            <span>Auto-upload</span>
+            <paper-toggle-button
+            checked="{{autoUpload}}">
+            </paper-toggle-button>
+          </div>
+
+          <div> <!-- Upload file button -->
+            <button id="upload"
+            on-click="{{manualUpload}}"
+            style="display:{{ autoUpload ? 'none' : 'inline-block' }}">
+              Upload files
+            </button>
+          </div>
+
+          <div flex></div>
+          <div> <!-- Status of the app -->
+            <div id="status">Ready</div>
+          </div>
+        </core-toolbar>
+
+        <!-- Panel with queued/uploaded files -->
+        <div id="file-splitter" horizontal layout>
+          <div class="panel">
+            <core-toolbar><div horizontal layout>Queue</div></core-toolbar>
+            <ul class="filelist">
+              <template repeat="{{file in uploadList}}">
+                <li>
+                <strong>{{file.name}}</strong> {{file.type}}
+                </li>
+              </template>
+            </ul>
+          </div>
+
+          <!-- Splitter -->
+          <core-splitter></core-splitter>
+
+          <div class="panel">
+            <core-toolbar><div horizontal layout>Uploaded</div></core-toolbar>
+
+            <ul class="filelist">
+              <template repeat="{{file in uploadedList}}">
+                <li>
+                <img src="{{file.iconLink}}">
+                <strong>{{file.title}}</strong>
+                <p>
+                <a href="{{file.selfLink}}">Drive URL</a>
+                <a href="{{file.webContentLink}}">Web URL</a>
+                </p>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </div>
+
+
+      </div>
+    </core-scaffold>
+
+  </template>
+
+<script>
+  Polymer({
+    uploadList: [],
+    uploadedList: [],
+    autoUpload: false,
+
+    tapSelect: function (e) {
+      this.$.files.click();
+    },
+
+    handleDragOver: function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+    },
+
+    handleFilePick: function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+      this.selectFiles(e.target.files);
+    },
+
+    handleFileSelect: function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+      this.selectFiles(e.dataTransfer.files);
+    },
+
+    clearUploadList: function () {
+      this.uploadedList = [];
+      this.uploadList = [];
+    },
+
+    uploadFiles: function (files) {
+      var uploadedList = this.uploadedList;
+      this.$.status.innerHTML = 'Uploading...';
+
+      var f;
+      for(var i=0; f = files[i]; i++) {
+        var uploader = new MediaUploader({
+          file: f,
+          token: this.accessToken,
+          onComplete: function (data) {
+            uploadedList.push(JSON.parse(data));
+            this.$.status.innerHTML = 'Upload successful';
+            this.uploadList = [];
+          }.bind(this)
+        });
+        uploader.upload();
+      }
+    },
+
+    manualUpload: function() {
+      this.uploadFiles(this.queue);
+    },
+
+    selectFiles: function (files) {
+      this.queue = files;
+      this.$.status.textContent = 'Files selected';
+
+      var f;
+      for(var i=0; f = files[i]; i++) {
+        this.uploadList.push(f);
+      }
+
+      if(this.autoUpload) {
+        this.uploadFiles(files);
+      }
+    },
+
+    signedIn: function (e) {
+      this.accessToken = e.detail.result.access_token;
+      this.$.loggedin.style.display = 'block';
+    },
+
+    signedOut: function (e) {
+      this.$.loggedin.style.display = 'none';
+    }
+  });
+</script>
+
+</polymer-element>
