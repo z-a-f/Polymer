@@ -4,7 +4,7 @@ Use bower to install the dependencies. You can use [Google Chrome Dev Editor](ht
 
 DriveClient
 ---
-Google drive client that uses Drive API, Drive SDK, and G+ SignIn API. 
+Google drive client that uses Drive API, Drive SDK, and G+ SignIn API.
 
 MobilePaper
 ---
@@ -13,3 +13,8 @@ Note taking app using Polymer and Webcomponents.js
 PolymerMaps
 ---
 Google Maps and Google Drive client using Polymer
+
+Visualize
+---
+Polymer Visualization using Google maps
+
