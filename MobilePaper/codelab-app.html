@@ -76,6 +76,7 @@
           <paper-input  id="newNoteInput"
                         floatingLabel
                         on-change="{{add}}"
+                        on-click="{{add}}"
                         value="{{newNote}}"
                         label="Add a new note">
           </paper-input>
@@ -111,7 +112,11 @@
         this.$.newNoteInput.style.display = 'none';
       },
       showNewNoteInput: function() {
-        this.$.newNoteInput.style.display = 'block';
+        if (this.$.newNoteInput.style.display == 'block') {
+          this.fire(add);
+        } else {
+          this.$.newNoteInput.style.display = 'block';
+        }
       },
 
       add: function() {
